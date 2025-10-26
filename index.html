@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI-Entwicklung: Vergangenheit bis Zukunft</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+
+
+        .timeline-container {
+            padding: 40px;
+            position: relative;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: 0;
+            margin-right: 52%;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: 52%;
+            margin-right: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid #667eea;
+            z-index: 2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-dot:hover {
+            transform: translateX(-50%) scale(1.5);
+            border-color: #764ba2;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .timeline-year {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .timeline-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .timeline-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .timeline-details.expanded {
+            max-height: 1000px;
+        }
+
+        .era-label {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .era-past {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .era-present {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .era-near-future {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .era-future {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 80px;
+                margin-right: 0;
+                text-align: left;
+            }
+
+            .timeline-dot {
+                left: 30px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Entwicklung der Künstlichen Intelligenz</h1>
+            <p class="subtitle">Von den Anfängen bis zur möglichen Singularität</p>
+        </header>
+
+
+
+        <div class="timeline-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">+78 Mio.</div>
+                    <div class="stat-label">Neue Jobs (netto) bis 2030</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30%</div>
+                    <div class="stat-label">Arbeitsstunden automatisierbar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$2,6-4,4B</div>
+                    <div class="stat-label">Gen-KI Jahreswert (McKinsey)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2027</div>
+                    <div class="stat-label">Mögliche AGI-Ankunft</div>
+                </div>
+            </div>
+
+            <div class="timeline" id="timeline">
+                <!-- Timeline items will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const timelineData = [
+            {
+                year: "16. Jahrhundert",
+                era: "past",
+                title: "Frühe Automatisierung",
+                description: "Erfindung des Strumpfwebstuhls zur Steigerung der Produktivität durch Ersatz menschlicher Handarbeit.",
+                details: "Dies markiert den Beginn der technologischen Revolution zur Ersetzung menschlicher Muskelkraft und manueller Arbeit.",
+                icon: "🧵"
+            },
+            {
+                year: "18./19. Jahrhundert",
+                era: "past",
+                title: "Industrielle Revolution",
+                description: "Dampfmaschine revolutioniert Produktion in Mühlen, Fabriken und Landwirtschaft.",
+                details: "James Watt und andere Erfinder ermöglichen die Mechanisierung der Produktion. Manuelle Arbeit wird massiv verdrängt.",
+                icon: "⚙️"
+            },
+            {
+                year: "20. Jahrhundert",
+                era: "past",
+                title: "Klassische Automatisierung",
+                description: "Fließbandarbeit (Henry Ford) und computergesteuerte Maschinen erhöhen industrielle Effizienz.",
+                details: "Einführung von Maschinen in Büros und Fabriken. Die Automatisierung erreicht neue Dimensionen.",
+                icon: "🏭"
+            },
+            {
+                year: "1956",
+                era: "past",
+                title: "Geburt der KI",
+                description: "Der Begriff 'Künstliche Intelligenz' wird geprägt.",
+                details: "Vor knapp 70 Jahren beginnt die erste Welle der KI-Forschung mit der Simulation intelligenten Verhaltens in engen Domänen.",
+                icon: "🧠"
+            },
+            {
+                year: "1960er-1990er",
+                era: "past",
+                title: "KI in der Industrie",
+                description: "Robotik und Expertensysteme halten Einzug in Unternehmen.",
+                details: "Hersteller beginnen, KI für repetitive Aufgaben einzusetzen: Montage, Teilehandhabung, Sortierung. Erste Expertensysteme wandern in Unternehmen.",
+                icon: "🤖"
+            },
+            {
+                year: "2012-2020",
+                era: "past",
+                title: "Deep Learning Revolution",
+                description: "AlexNet-Durchbruch und Transformer-Architektur verändern die KI fundamental.",
+                details: "Fortschritte in Computer Vision, Sprachverarbeitung und Empfehlungssystemen. Die Grundlage für moderne KI wird gelegt.",
+                icon: "🔬"
+            },
+            {
+                year: "2022",
+                era: "present",
+                title: "Generative KI erreicht Massenmarkt",
+                description: "ChatGPT und andere LLMs demokratisieren den Zugang zu KI.",
+                details: "Der Fokus verlagert sich von Muskelkraft auf intellektuelle Arbeit. GKI zielt auf wissensintensive Tätigkeiten ab, nicht nur auf Routinearbeiten.",
+                icon: "✨"
+            },
+            {
+                year: "2024/2025",
+                era: "present",
+                title: "Breite Integration (Gegenwart)",
+                description: "Fast ein Drittel aller Beschäftigten in Deutschland nutzt neue KI-Anwendungen.",
+                details: "KI wird zur Verstärkung und direkten Unterstützung von Mitarbeitern eingesetzt. Nachfrage nach Führungskräften steigt, die KI in Prozesse integrieren können. Kognitive und zwischenmenschliche Fähigkeiten gewinnen an Bedeutung.",
+                icon: "💼"
+            },
+            {
+                year: "2025-2030",
+                era: "near-future",
+                title: "Arbeitsmarkt-Transformation",
+                description: "WEF prognostiziert +170 Mio. neue vs. -92 Mio. wegfallende Stellen (netto +78 Mio.).",
+                details: "Bis zu 30% der Arbeitsstunden in Europa und USA könnten automatisiert werden. Nachfrage nach STEM-Berufen und Gesundheitswesen steigt erheblich. McKinsey beziffert Gen-KI-Mehrwert auf $2,6-4,4 Billionen jährlich. Skills verschieben sich zu KI/Big Data, Cybersecurity und Tech-Literacy.",
+                icon: "📊"
+            },
+            {
+                year: "2. August 2026",
+                era: "near-future",
+                title: "EU AI Act in Kraft",
+                description: "Breite Anwendung der KI-Regulierung in Europa beginnt.",
+                details: "Regulatorischer Meilenstein mit weiteren Verpflichtungen bis 2027/2030. Europa setzt Standards für KI-Governance.",
+                icon: "⚖️"
+            },
+            {
+                year: "2027",
+                era: "near-future",
+                title: "⚠️ Mögliche AGI-Ankunft",
+                description: "Vorhersagemärkte und Top-Labor-CEOs prognostizieren Künstliche Allgemeine Intelligenz.",
+                details: "KRITISCHER WENDEPUNKT: AGI könnte die meisten Menschen in den meisten Berufen ersetzen (physische und kognitive Arbeit). Experten warnen vor möglicher Massenarbeitslosigkeit von bis zu 99%, selbst ohne Superintelligenz.",
+                icon: "🚨"
+            },
+            {
+                year: "Bis 2030",
+                era: "near-future",
+                title: "Humanoide Roboter & Cybersecurity-Bedrohungen",
+                description: "Physische Automatisierung erreicht neues Level.",
+                details: "Humanoide Roboter mit der erforderlichen Flexibilität zur Konkurrenz in allen Domänen könnten auf den Markt kommen. Berufe wie Klempner gelten als letzte sichere Jobs. KI könnte neuartige Cyberangriffe erzeugen, an die kein Mensch je gedacht hat.",
+                icon: "🦾"
+            },
+            {
+                year: "2030-2045",
+                era: "future",
+                title: "Auf dem Weg zur Superintelligenz",
+                description: "KI könnte besser als Menschen in allen Dingen werden.",
+                details: "Die volle Superintelligenz könnte in 10-20 Jahren erreicht werden. Diese Phase bestimmt möglicherweise das weitere Schicksal der Menschheit.",
+                icon: "🌌"
+            },
+            {
+                year: "2045",
+                era: "future",
+                title: "Die Singularität",
+                description: "Ray Kurzweil: Technologischer Fortschritt wird für Menschen unverständlich.",
+                details: "Das Jahr, in dem der technologische Fortschritt so schnell wird, dass er die menschliche Vorstellungskraft übersteigt.",
+                icon: "🔮"
+            },
+            {
+                year: "2100+",
+                era: "future",
+                title: "Schicksal der Menschheit",
+                description: "Existenzielle Fragen über die Zukunft der Menschheit.",
+                details: "Falls Superintelligenz unkontrolliert entwickelt wird: Prognosen reichen von Auslöschung der Menschheit bis zu einer völlig unbegreiflichen Welt. Die Weichenstellung erfolgt in den kommenden Jahrzehnten.",
+                icon: "🌍"
+            }
+        ];
+
+        function renderTimeline() {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+
+            timelineData.forEach((item, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = `timeline-item ${item.era}`;
+                timelineItem.style.animationDelay = `${index * 0.1}s`;
+                
+                const eraClass = `era-${item.era === 'near-future' ? 'near-future' : item.era}`;
+                
+                timelineItem.innerHTML = `
+                    <div class="timeline-dot" onclick="toggleDetails(this)"></div>
+                    <div class="timeline-content" onclick="toggleDetails(this)">
+                        <div class="timeline-year">${item.icon} ${item.year}</div>
+                        <div class="timeline-title">${item.title}</div>
+                        <div class="timeline-description">${item.description}</div>
+                        <span class="era-label ${eraClass}">
+                            ${item.era === 'past' ? 'Vergangenheit' : 
+                              item.era === 'present' ? 'Gegenwart' : 
+                              item.era === 'near-future' ? 'Nahe Zukunft' : 'Ferne Zukunft'}
+                        </span>
+                        <div class="timeline-details">
+                            <p>${item.details}</p>
+                        </div>
+                    </div>
+                `;
+                
+                timeline.appendChild(timelineItem);
+            });
+        }
+
+        function toggleDetails(element) {
+            const content = element.classList.contains('timeline-content') 
+                ? element 
+                : element.nextElementSibling;
+            const details = content.querySelector('.timeline-details');
+            details.classList.toggle('expanded');
+        }
+
+        // Initial render
+        renderTimeline();
+    </script>
+</body>
+</html>
